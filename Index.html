@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Matching Web APP by Faizan Abbasi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 3px solid;
+            padding-bottom: 10px;
+        }
+
+        .buyer-section h2 {
+            border-color: #4CAF50;
+        }
+
+        .seller-section h2 {
+            border-color: #FF9800;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .entries-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .entries-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .entries-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .entry-list h3 {
+            color: #555;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid;
+        }
+
+        .buyers-list h3 {
+            border-color: #4CAF50;
+        }
+
+        .sellers-list h3 {
+            border-color: #FF9800;
+        }
+
+        .entry-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid;
+        }
+
+        .buyer-entry {
+            border-color: #4CAF50;
+        }
+
+        .seller-entry {
+            border-color: #FF9800;
+        }
+
+        .entry-item h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .entry-item p {
+            color: #666;
+            font-size: 14px;
+            margin: 2px 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .modal p {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .main-content, .entries-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Property Matching Web APP by Faizan Abbasi</h1>
+            <p>Connect buyers and sellers with matching preferences</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section buyer-section">
+                <h2>🛒 Add Buyer</h2>
+                <form id="buyerForm">
+                    <div class="form-group">
+                        <label for="buyerName">Name</label>
+                        <input type="text" id="buyerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="buyerBudget">Budget (PKR)</label>
+                        <input type="number" id="buyerBudget" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="buyerLocation">Preferred Location</label>
+                        <input type="text" id="buyerLocation" placeholder="e.g., Downtown, Suburbs, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="buyerPropertyType">Property Type</label>
+                        <input type="text" id="buyerPropertyType" placeholder="e.g., Apartment, House, Condo, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="buyerArea">Property Area (sq ft)</label>
+                        <input type="text" id="buyerArea" placeholder="e.g., 1200, 800-1000, 1500+ sq ft" required>
+                    </div>
+                    <button type="submit" class="btn">Add Buyer</button>
+                </form>
+            </div>
+
+            <div class="form-section seller-section">
+                <h2>🏡 Add Seller</h2>
+                <form id="sellerForm">
+                    <div class="form-group">
+                        <label for="sellerName">Name</label>
+                        <input type="text" id="sellerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerPrice">Asking Price (PKR)</label>
+                        <input type="number" id="sellerPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerLocation">Location</label>
+                        <input type="text" id="sellerLocation" placeholder="e.g., Downtown, Suburbs, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerPropertyType">Property Type</label>
+                        <input type="text" id="sellerPropertyType" placeholder="e.g., Apartment, House, Condo, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerArea">Property Area (sq ft)</label>
+                        <input type="text" id="sellerArea" placeholder="e.g., 1200, 800-1000, 1500+ sq ft" required>
+                    </div>
+                    <button type="submit" class="btn">Add Seller</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="entries-section">
+            <h2>📋 All Entries</h2>
+            <div class="entries-grid">
+                <div class="entry-list buyers-list">
+                    <h3>Buyers</h3>
+                    <div id="buyersList"></div>
+                </div>
+                <div class="entry-list sellers-list">
+                    <h3>Sellers</h3>
+                    <div id="sellersList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 20px; color: white; margin-top: 40px; font-size: 14px;">
+        Made by <strong>Faizan Abbasi</strong>
+    </footer>
+
+    <!-- Match Modal -->
+    <div id="matchModal" class="modal">
+        <div class="modal-content">
+            <h3>🎉 Match Found!</h3>
+            <p id="matchMessage"></p>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Load data from localStorage or initialize empty arrays
+        let buyers = JSON.parse(localStorage.getItem('propertyBuyers')) || [];
+        let sellers = JSON.parse(localStorage.getItem('propertySellers')) || [];
+
+        // DOM elements
+        const buyerForm = document.getElementById('buyerForm');
+        const sellerForm = document.getElementById('sellerForm');
+        const buyersList = document.getElementById('buyersList');
+        const sellersList = document.getElementById('sellersList');
+        const matchModal = document.getElementById('matchModal');
+        const matchMessage = document.getElementById('matchMessage');
+
+        // Event listeners
+        buyerForm.addEventListener('submit', handleBuyerSubmit);
+        sellerForm.addEventListener('submit', handleSellerSubmit);
+
+        function handleBuyerSubmit(e) {
+            e.preventDefault();
+            
+            const buyer = {
+                name: document.getElementById('buyerName').value,
+                budget: parseInt(document.getElementById('buyerBudget').value),
+                location: document.getElementById('buyerLocation').value,
+                propertyType: document.getElementById('buyerPropertyType').value,
+                area: document.getElementById('buyerArea').value
+            };
+
+            buyers.push(buyer);
+            localStorage.setItem('propertyBuyers', JSON.stringify(buyers));
+            buyerForm.reset();
+            updateDisplay();
+            checkForMatches(buyer, 'buyer');
+        }
+
+        function handleSellerSubmit(e) {
+            e.preventDefault();
+            
+            const seller = {
+                name: document.getElementById('sellerName').value,
+                price: parseInt(document.getElementById('sellerPrice').value),
+                location: document.getElementById('sellerLocation').value,
+                propertyType: document.getElementById('sellerPropertyType').value,
+                area: document.getElementById('sellerArea').value
+            };
+
+            sellers.push(seller);
+            localStorage.setItem('propertySellers', JSON.stringify(sellers));
+            sellerForm.reset();
+            updateDisplay();
+            checkForMatches(seller, 'seller');
+        }
+
+        function checkForMatches(newEntry, type) {
+            let matches = [];
+
+            if (type === 'buyer') {
+                // Check against all sellers
+                matches = sellers.filter(seller => 
+                    seller.location === newEntry.location &&
+                    seller.propertyType === newEntry.propertyType &&
+                    seller.area === newEntry.area &&
+                    newEntry.budget >= seller.price
+                );
+                
+                matches.forEach(seller => {
+                    showMatchModal(newEntry.name, seller.name);
+                });
+            } else {
+                // Check against all buyers
+                matches = buyers.filter(buyer => 
+                    buyer.location === newEntry.location &&
+                    buyer.propertyType === newEntry.propertyType &&
+                    buyer.area === newEntry.area &&
+                    buyer.budget >= newEntry.price
+                );
+                
+                matches.forEach(buyer => {
+                    showMatchModal(buyer.name, newEntry.name);
+                });
+            }
+        }
+
+        function showMatchModal(buyerName, sellerName) {
+            matchMessage.textContent = `Buyer ${buyerName} matches with Seller ${sellerName}.`;
+            matchModal.style.display = 'block';
+        }
+
+        function closeModal() {
+            matchModal.style.display = 'none';
+        }
+
+        function updateDisplay() {
+            // Update buyers list
+            buyersList.innerHTML = '';
+            buyers.forEach(buyer => {
+                const div = document.createElement('div');
+                div.className = 'entry-item buyer-entry';
+                div.innerHTML = `
+                    <h4>${buyer.name}</h4>
+                    <p><strong>Budget:</strong> ${buyer.budget.toLocaleString()}</p>
+                    <p><strong>Location:</strong> ${buyer.location}</p>
+                    <p><strong>Type:</strong> ${buyer.propertyType}</p>
+                    <p><strong>Area:</strong> ${buyer.area}</p>
+                `;
+                buyersList.appendChild(div);
+            });
+
+            if (buyers.length === 0) {
+                buyersList.innerHTML = '<p style="color: #999; text-align: center;">No buyers added yet</p>';
+            }
+
+            // Update sellers list
+            sellersList.innerHTML = '';
+            sellers.forEach(seller => {
+                const div = document.createElement('div');
+                div.className = 'entry-item seller-entry';
+                div.innerHTML = `
+                    <h4>${seller.name}</h4>
+                    <p><strong>Price:</strong> ${seller.price.toLocaleString()}</p>
+                    <p><strong>Location:</strong> ${seller.location}</p>
+                    <p><strong>Type:</strong> ${seller.propertyType}</p>
+                    <p><strong>Area:</strong> ${seller.area}</p>
+                `;
+                sellersList.appendChild(div);
+            });
+
+            if (sellers.length === 0) {
+                sellersList.innerHTML = '<p style="color: #999; text-align: center;">No sellers added yet</p>';
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target === matchModal) {
+                closeModal();
+            }
+        }
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
