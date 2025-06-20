@@ -33,3 +33,5 @@ Real estate agents managing local property listings
 Property marketplaces needing quick buyer-seller filtering
 
 Learning tool for beginners in full-stack web development
+
+All rights reserved
